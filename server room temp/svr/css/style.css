@@ -1,0 +1,221 @@
+@charset "utf-8";
+
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0 auto;
+  padding: 0 auto;
+  font-family: "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", "メイリオ", Meiryo, Osaka, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;  /*フォント種類*/
+  background-color: #ffffff;
+  background-image: linear-gradient(90deg, rgba(187, 255, 239, 1), rgba(236, 237, 203, 1) 34%, rgba(248, 227, 183, 1) 72%, rgba(255, 155, 252, 1) 97%);
+  #-webkit-text-size-adjust: none;
+}
+
+.layout {
+  display: grid;
+  grid-template-rows: 55px 25px 3fr 25px;
+  grid-template-columns: 1fr 1fr 1fr;
+  width: 100vw;
+  height: 100vh;
+}
+
+header {
+  grid-row: 1;
+  grid-column: 1 / 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 170%;  /* 文字サイズ */
+  color: #ffffff;
+  background-color: #4169e1;
+}
+
+footer {
+  grid-row: 6;
+  grid-column: 1 / 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 70%;  /* 文字サイズ */
+  color: #ffffff;
+  background-color: #4169e1;
+}
+
+
+/* navigation */
+nav {
+  grid-row: 2;
+  grid-column: 1 / 4;
+  background-color: dimgray;
+  text-align: center;
+  padding-top: 0px;
+  box-sizing: border-box;
+}
+ul {
+  overflow:hidden;
+  list-style: none;
+  margin: 0 auto;
+}
+ul li {
+  display: inline-block;
+}
+ul li:hover {
+  -webkit-transform-origin: left top;
+  -ms-transform-origin: left top;
+  transform-origin: left top;
+  -webkit-transform: scale(1, 1);
+  -ms-transform: scale(1, 1);
+  transform: scale(1, 1)
+}
+a {
+  display: block;
+  align-items: center;
+  justify-content: center;
+  text-wrap: nowrap;
+  text-decoration: none;
+  color: white;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+
+/* contents */
+.contents-grid {
+  grid-row: 3;
+  grid-column: 1 / 4;
+  display: grid;
+  grid-template-rows: 10% 3fr 2fr 10%;
+  grid-template-columns: 5% 1fr 5%;
+  width: 100vw;
+  /* background-color: #fffafa; */
+}
+
+.card1 {
+  grid-row: 2;
+  grid-column: 2;
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  background-color: rgba(255, 255, 255, 0.75);
+  border-radius: 12px;
+  border: 1px solid rgba(209, 213, 219, 0.3);
+  margin: 10px;
+}
+
+.card2 {
+  grid-row: 3;
+  grid-column: 2;
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  background-color: rgba(255, 255, 255, 0.75);
+  border-radius: 12px;
+  border: 1px solid rgba(209, 213, 219, 0.3);
+  margin: 10px;
+}
+
+.card-grid-container {
+  display: grid;
+  grid-template-rows: 10% 1fr 1fr 10%;
+  grid-template-columns: 10% 1fr 1fr 1fr 10%;
+  width: 100%;
+  height: 100%;
+  /* background-color: #fffafa; */
+}
+
+.card1-grid-item1 {
+  grid-row: 2;
+  grid-column: 2 / 3;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  text-wrap: nowrap;
+  font-size: 150%;  /* 文字サイズ */
+  margin: 10px;
+  color: #000000;
+}
+
+.card1-grid-item2 {
+  grid-row: 3;
+  grid-column: 2 / 4;
+  display: flex;
+  align-items: center;
+  justify-content: right;
+  text-wrap: nowrap;
+  font-size: 450%;  /* 文字サイズ */
+  margin: 10px;
+  color: #000000;
+}
+
+.card2-grid-item1 {
+  grid-row: 2;
+  grid-column: 2 / 3;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  text-wrap: nowrap;
+  font-size: 150%;  /* 文字サイズ */
+  margin: 10px;
+  color: #000000;
+}
+
+.card2-grid-item2 {
+  grid-row: 3;
+  grid-column: 2 / 5;
+  display: flex;
+  align-items: center;
+  justify-content: right;
+  text-wrap: nowrap;
+  font-size: 120%;  /* 文字サイズ */
+  margin: 10px;
+  color: #000000;
+}
+
+
+/* データ履歴 */
+.contents-grid-graph {
+  grid-row: 3;
+  grid-column: 1 / 4;
+  display: grid;
+  grid-template-rows: 5% 1fr 5fr 5%;
+  grid-template-columns: 5% 1fr 5%;
+  width: 100vw;
+  /* background-color: #57fafa; */
+}
+
+.graph-grid-item1 {
+  grid-row: 2;
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  text-wrap: nowrap;
+  font-size: 100%;  /* 文字サイズ */
+  margin: 10px;
+  color: #000000;
+  /* background-color: #fa7ffa; */
+}
+
+.graph-grid-item2 {
+  grid-row: 3;
+  grid-column: 2;
+  display: flex;
+  height: 400px;
+  align-items: center;
+  justify-content: left;
+  text-wrap: nowrap;
+  font-size: 100%;  /* 文字サイズ */
+  margin: 10px;
+  color: #000000;
+  /* background-color: #3ffa57; */
+}
+
+
+h1, h2, h3, h4, h5, p, ul, ol, li, dl, dt, dd, form, figure, form { margin: 0px; padding: 0px; font-size: 100%; font-weight: normal; }
+
+img { border: none; max-width: 100%; width: auto; height: auto; vertical-align: middle; }
+
+iframe { width: 100%; }
+
+
