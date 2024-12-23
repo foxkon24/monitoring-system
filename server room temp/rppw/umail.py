@@ -1,8 +1,7 @@
-﻿# uMail (MicroMail) for MicroPython
+# uMail (MicroMail) for MicroPython
 # Copyright (c) 2018 Shawwwn <shawwwn1@gmail.com>
 # License: MIT
 import socket
-
 
 DEFAULT_TIMEOUT = 10 # sec
 LOCAL_DOMAIN = '127.0.0.1'
@@ -13,8 +12,18 @@ CMD_MAIL = 'MAIL'
 AUTH_PLAIN = 'PLAIN'
 AUTH_LOGIN = 'LOGIN'
 
-
 class SMTP:
+    def cmd(self, cmd_str):
+        sock = self._sock;
+        sock.write('%s\r\n' % cmd_str)
+        resp = []
+        next = True
+        while next:
+            code = sock.read(3)
+            next = sock.read(1) == b'-'
+            resp.append(sock.readline().strip().decode())
+        return int(code), resp
+
     def __init__(self, host, port, sslflg=False, username=None, password=None):
         import ssl
         self.username = username
@@ -31,26 +40,13 @@ class SMTP:
 
         code, resp = self.cmd(CMD_EHLO + ' ' + LOCAL_DOMAIN)
         assert code==250, '%d' % code
-        if not sslflg and CMD_STARTTLS in resp:
+        if not ssl and CMD_STARTTLS in resp:
             code, resp = self.cmd(CMD_STARTTLS)
             assert code==220, 'start tls failed %d, %s' % (code, resp)
             self._sock = ssl.wrap_socket(sock)
 
         if username and password:
             self.login(username, password)
-
-
-    def cmd(self, cmd_str):
-        sock = self._sock;
-        sock.write('%s\r\n' % cmd_str)
-        resp = []
-        next = True
-        while next:
-            code = sock.read(3)
-            next = sock.read(1) == b'-'
-            resp.append(sock.readline().strip().decode())
-        return int(code), resp
-
 
     def login(self, username, password):
         self.username = username
@@ -77,7 +73,6 @@ class SMTP:
         assert code==235 or code==503, 'auth error %d, %s' % (code, resp)
         return code, resp
 
-
     def to(self, addrs, mail_from=None):
         mail_from = self.username if mail_from==None else mail_from
         code, resp = self.cmd('MAIL FROM: <%s>' % mail_from)
@@ -97,10 +92,8 @@ class SMTP:
         assert code==354, 'data refused, %d, %s' % (code, resp)
         return code, resp
 
-
     def write(self, content):
         self._sock.write(content)
-
 
     def send(self, content=''):
         if content:
@@ -109,8 +102,6 @@ class SMTP:
         line = self._sock.readline()
         return (int(line[:3]), line[4:].strip().decode())
 
-
     def quit(self):
         self.cmd("QUIT")
         self._sock.close()
-

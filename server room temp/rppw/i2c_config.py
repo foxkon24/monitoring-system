@@ -1,6 +1,6 @@
 i2c_config = {
-    "index": 0,
-    "sda": 16,
-    "scl": 17
+    "index": 1,
+    "sda": 14,
+    "scl": 15
 }
 
