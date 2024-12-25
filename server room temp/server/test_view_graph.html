@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1, minimum-scale=1, shrink-to-fit=no, user-scalable=no">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.5/dist/chart.umd.min.js"></script>
+    <title>サーバー室温監視システム</title>
+</head>
+<body>
+    <div class="layout">
+        <header><h1>サーバー室温監視システム</h1></header>
+        <nav>
+            <ul>
+                <li><a href="test_index.php">Top</a></li>
+                <li><a href="test_view_graph.html">温度データ履歴</a></li>
+            </ul>
+        </nav>
+        <div class="contents-grid-graph">
+            <div class="graph-grid-item1">
+                <form method="post" action="test_view_graph.php">
+                    <label for="date">日付:</label>
+                    <input type="date" id="date" name="date">
+                    <input type="submit" value="グラフ表示">
+                </form>
+                <input type="button" onclick="doReload();" value="リロード" />
+                <script>
+                    function doReload() {
+                        window.location.reload();
+                    }
+                </script>
+            </div>
+            <div class="graph-grid-item2">
+                <canvas id="myChart"></canvas>
+                <script src="js/test_view_graph.js"></script>
+            </div>
+        </div>
+        <footer>&nbsp;&nbsp;Copyright&copy;&nbsp;&nbsp;2024&nbsp;&nbsp;株式会社&nbsp;共立電機製作所&nbsp;&nbsp;All&nbsp;rights&nbsp;reserved.</footer>
+    </div>
+</body>
+</html>

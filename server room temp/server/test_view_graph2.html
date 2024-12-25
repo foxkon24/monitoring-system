@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1, minimum-scale=1, shrink-to-fit=no, user-scalable=no">
+    <link rel="stylesheet" href="css/style.css">
+    <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.5/dist/chart.umd.min.js"></script> -->
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
+    <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
+    <title>サーバー室温監視システム</title>
+</head>
+<body>
+    <div class="layout">
+        <header><h1>サーバー室温監視システム</h1></header>
+        <nav>
+            <ul>
+                <li><a href="test_index.php">Top</a></li>
+                <li><a href="test_view_graph.html">温度データ履歴</a></li>
+            </ul>
+        </nav>
+        <div class="contents-grid-graph">
+            <div class="graph-grid-item1">
+                <form method="post">
+                    <label for="date">日付:</label>
+                    <input type="date" id="date" name="date">
+                    <input type="submit" value="グラフ表示">
+                </form>
+                <input type="button" onclick="doReload();" value="リロード" />
+                <!--
+                <script>
+                    function doReload() {
+                        window.location.reload();
+                    }
+                </script>
+                -->
+            </div>
+            <div class="graph-grid-item2">
+                <!--
+                <canvas id="myChart"></canvas>
+                <script src="js/test_view_graph.js"></script>
+                -->
+
+                <div id="plot"></div>
+
+                <py-script>
+                    import pandas as pd
+                    import matplotlib.pyplot as plt
+                    from matplotlib import pyplot
+                    from sqlalchemy import create_engine
+
+                    engine = create_engine( 'mysql+pymysql://user:kyo_user_727880@172.16.20.250/temp_room_svr' )
+
+                    date = Element( 'date' ).element.value
+
+                    with engine.connect() as conn:
+                        sql = f"""
+                            SELECT date, time, temp
+                            FROM test_rcd_temp
+                            WHERE date = '{date}';
+                            """
+                        df = pd.read_sql( sql, conn )
+
+                    plt.figure( figsize = ( 10, 5 ) )
+                    plt.plot( df['datetime'], df['temp'] )
+                    plt.xlabel( 'time' )
+                    plt.ylabel( 'temp' )
+                    plt.title( f'{date}' )
+                    plt.grid( True )
+
+                    plt.savefig( 'plot.png' )
+                    img_tag = Element( 'img', src='plot.png' )
+                    plot_div = Element( 'div', id='plot' )
+                    plot_div.element.append( img_tag )
+                </py-script>
+
+            </div>
+        </div>
+        <footer>&nbsp;&nbsp;Copyright&copy;&nbsp;&nbsp;2024&nbsp;&nbsp;株式会社&nbsp;共立電機製作所&nbsp;&nbsp;All&nbsp;rights&nbsp;reserved.</footer>
+    </div>
+</body>
+</html>
