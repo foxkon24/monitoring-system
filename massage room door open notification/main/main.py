@@ -10,9 +10,9 @@ import uasyncio
 
 
 #定数
-SVR_URL = "http://172.16.20.250/system/massage_room_door/test_regist.php"  #"http://172.16.20.250/system/massage_room_door/regist.php"
+SVR_URL = "http://172.16.20.250/system/room_door/massage/test_regist.php"  #"http://172.16.20.250/system/room_door/massage/regist.php"
 
-WAIT_TIME_TASK = const(3)
+WAIT_TIME_TASK = const(1)
 
 
 #変数
@@ -86,11 +86,13 @@ async def do_task():
     while True:
         dt, tm = datetime_now()
 
-        door_status = get_reed_sens()
-        if door_status == 1:  #ドア開
-            print("Door: Open.")
-        else:  #ドア閉
+        tmp = get_reed_sens()
+        if tmp == 1:  #リードセンサーOn
+            door_status = 0  #ドアクローズとする
             print("Door: Close.")
+        else:  #リードセンサーOff
+            door_status = 1  #ドアオープンとする
+            print("Door: Open.")
 
         do_post(dt, tm, door_status)
 
