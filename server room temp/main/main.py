@@ -170,9 +170,12 @@ if __name__ == "__main__":
         else:  #Wi-Fi接続失敗
             while True:  #LED点滅
                 lcl_led.toggle()
-                utime.sleep(2.5)
+                utime.sleep(1)
 
     except Exception as e:
         print("device init - Exception Error: ", e)
 
+        while True:  #LED点滅
+            lcl_led.toggle()
+            utime.sleep(2.5)
 
