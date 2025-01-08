@@ -10,7 +10,7 @@ import uasyncio
 
 
 #定数
-SVR_URL = "http://172.16.20.250/system/room_door/massage/test_regist.php"  #"http://172.16.20.250/system/room_door/massage/regist.php"
+SVR_URL = "http://172.16.20.250/system/room_door/massage/regist.php"
 
 WAIT_TIME_TASK = const(1)
 
