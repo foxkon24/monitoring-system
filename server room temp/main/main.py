@@ -77,7 +77,7 @@ def sent_mail(host, port, from_addr, from_pwd, to_addr, subject, body_text):
 #メール通知
 def mail_notify(temp, multiple_sent_enable = False):
     email_subject = "サーバー室温監視システム通知"
-    body_text = f"サーバー室温が{str(temp)}℃以上になっています。\nサーバー室を確認してください。"
+    body_text = f"サーバー室温が{str(temp)}℃以上になっています。\nサーバー室のエアコンを確認してください。"
 
     sent_mail(mail_config["smtp_server"], mail_config["smtp_port"], mail_config["from_email"], mail_config["from_app_pwd"], mail_config["to_email_1"], email_subject, body_text)
 
@@ -88,7 +88,7 @@ def mail_notify(temp, multiple_sent_enable = False):
 #Webhook通知
 def webhook_nofity(date, time, temperature):
     try:
-        body_text = f"サーバー室温が{str(temperature)}℃以上になっています。サーバー室を確認してください。"
+        body_text = f"サーバー室温が{str(temperature)}℃以上になっています。サーバー室のエアコンを確認してください。"
 
         contents = {
             "title": "サーバー室温監視システム通知",
