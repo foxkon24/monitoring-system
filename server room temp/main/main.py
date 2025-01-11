@@ -11,6 +11,7 @@ from mail_config import *
 import urequests
 import ujson
 import uasyncio
+import webhook
 
 
 #定数
@@ -19,6 +20,9 @@ SVR_URL = "http://172.16.20.250/system/temp/room_svr/regist.php"
 WAIT_TIME_TASK = const(60)
 TEMP_ABNORMAL = float(25.0)  #異常温度(℃)
 CNT_OVERFLOW = 10
+
+#Webhook(PowerAutomate(sysadmin@mgc-kyoritsu.co.jp): Webhook要求受信チャット投稿 - IOTシステム通知)
+WEBHOOK_URL = "https://prod-21.japaneast.logic.azure.com:443/workflows/8e0d5d328a6b4405b0f94dea35976fb8/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=JC2VKYpNdoB1y-PaongPFMPOXPiZqFbkSApen8ToSrM"
 
 
 #変数
@@ -81,11 +85,59 @@ def mail_notify(temp, multiple_sent_enable = False):
         sent_mail(mail_config["smtp_server"], mail_config["smtp_port"], mail_config["from_email"], mail_config["from_app_pwd"], mail_config["to_email_2"], email_subject, body_text)
 
 
+#Webhook通知
+def webhook_nofity(date, time, temperature):
+    try:
+        body_text = f"サーバー室温が{str(temperature)}℃以上になっています。サーバー室を確認してください。"
+
+        contents = {
+            "title": "サーバー室温監視システム通知",
+            "timestamp": date + " " + time,
+            "message": body_text
+        }
+
+        payload = {
+            "type": "message",
+            "attachments": [
+                {
+                    "contentType": "application/vnd.microsoft.card.adaptive",
+                    "content": {
+                        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                        "type": "AdaptiveCard",
+                        "version": "1.4",
+                        "body": [
+                            {
+                                "type": "TextBlock",
+                                "text": contents["title"],
+                                "size": "Large"
+                            },
+                            {
+                                "type": "TextBlock",
+                                "text": contents["timestamp"],
+                                "size": "Default"
+                            },
+                            {
+                                "type": "TextBlock",
+                                "text": contents["message"],
+                                "size": "Default",
+                                "wrap": true
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+
+        resp = wh.send_msteams(WEBHOOK_URL, payload)
+    except Exception as e:
+        print("POST通信エラー:", e)
+
+
 #POST通信
 def do_post(date, time, temperature):
-    headers = { "Content-Type": "application/json" }
+    headers = {"Content-Type": "application/json"}
 
-    body = { "date": date, "time": time, "temperature": temperature }
+    body = {"date": date, "time": time, "temperature": temperature}
     resp = urequests.post(SVR_URL, headers = headers, data = ujson.dumps(body).encode("utf-8"))
 
     print("HTTP Status Code:", resp.status_code)
@@ -110,7 +162,8 @@ async def do_task():
         #do_post(dt, tm, temp)
 
         #if temp >= TEMP_ABNORMAL:  #異常温度以上
-        #    mail_notify(temp, multiple_sent_enable = True)
+        #    mail_notify(temp, multiple_sent_enable = False)
+        #    webhook_nofity(dt, tm, temp)
 
         if cnt >= CNT_OVERFLOW:
             cnt = 0
@@ -118,7 +171,8 @@ async def do_task():
             do_post(dt, tm, temp)
 
             if temp >= TEMP_ABNORMAL:  #異常温度以上
-                mail_notify(temp, multiple_sent_enable = True)
+                #mail_notify(temp, multiple_sent_enable = False)
+                webhook_nofity(dt, tm, temp)
 
         else:
             cnt += 1
@@ -150,6 +204,8 @@ if __name__ == "__main__":
             else:
                 print("RTC Set Error.")
                 machine.reset()
+
+            wh = webhhok.Webhook()
 
             loop = uasyncio.new_event_loop()
             loop.create_task(do_task())
