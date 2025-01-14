@@ -10,25 +10,24 @@ import uasyncio
 
 
 #定数
-SVR_URL = "http://172.16.20.250/system/room_door/massage/regist.php"
+SVR_URL = 'http://172.16.20.250/system/room_door/massage/regist.php'
 
-WAIT_TIME_TASK = const(1)
+WAIT_TIME_TASK = const(2)
 
 
 #変数
 door_status = 0
-cnt = 0
 
 
 #現在日時取得
 #日付フォーマットは、「yyyy-MM-dd」形式とする。
 def datetime_now():
     time_now = utime.localtime()
-    sdate = "{:>4}".format(str(time_now[0])) + "-" + "{:0>2}".format(str(time_now[1])) + "-" + "{:0>2}".format(str(time_now[2]))
-    stime = "{:>2}".format(str(time_now[3])) + ":" + "{:0>2}".format(str(time_now[4])) + ":" + "{:0>2}".format(str(time_now[5]))
-    sdatetime = sdate + " " + stime
+    sdate = '{:>4}'.format(str(time_now[0])) + '-' + '{:0>2}'.format(str(time_now[1])) + '-' + '{:0>2}'.format(str(time_now[2]))
+    stime = '{:>2}'.format(str(time_now[3])) + ':' + '{:0>2}'.format(str(time_now[4])) + ':' + '{:0>2}'.format(str(time_now[5]))
+    sdatetime = f'{sdate}{stime}'
 
-    print(f"日時: {sdatetime}")
+    print(f'日時: {sdatetime}')
 
     return (sdate, stime)
 
@@ -39,16 +38,16 @@ def get_reed_sens():
 
     res = reed.value()
     if res == 1:  #On(センサー接触)
-        print("リードセンサー状態: On")
+        print('リードセンサー状態: On')
     else:  #Off(センサー非接触)
-        print("リードセンサー状態: Off")
+        print('リードセンサー状態: Off')
 
     return (res)
 
 
 #有効時間チェック
 def is_allowed_time():
-    """ 水曜日・木曜日の9:00-16:00の間のみTrueを返す """
+    ''' 水曜日・木曜日の9:00-16:00の間のみTrueを返す '''
     time_now = utime.localtime()
     weekday = time_now[6]  # 0=月曜日, 1=火曜日, ..., 6=日曜日
     hour = time_now[3]
@@ -60,39 +59,39 @@ def is_allowed_time():
 #POST通信
 def do_post(date, time, door_sts):
     if not is_allowed_time():
-        print("現在は通信可能な時間帯ではありません")
+        print('現在は通信可能な時間帯ではありません')
         return
 
-    headers = {"Content-Type": "application/json"}
+    headers = {'Content-Type': 'application/json'}
 
     try:
-        body = {"date": date, "time": time, "doorstatus": door_sts}
-        resp = urequests.post(SVR_URL, headers=headers, data=ujson.dumps(body).encode("utf-8"))
+        body = {'date': date, 'time': time, 'doorstatus': door_sts}
+        resp = urequests.post(SVR_URL, headers=headers, data=ujson.dumps(body).encode('utf-8'))
 
-        print("HTTP Status Code:", resp.status_code)
+        print('HTTP Status Code:', resp.status_code)
         print(resp.text)
 
         resp.close()
     except Exception as e:
-        print("POST通信エラー:", e)
+        print('POST通信エラー:', e)
 
 
 #タスク処理
 async def do_task():
     global door_status
 
-    print("start task...")
+    print('start task...')
 
     while True:
         dt, tm = datetime_now()
 
         tmp = get_reed_sens()
         if tmp == 1:  #リードセンサーOn
-            door_status = 0  #ドアクローズとする
-            print("Door: Close.")
-        else:  #リードセンサーOff
             door_status = 1  #ドアオープンとする
-            print("Door: Open.")
+            print('Door: Open.')
+        else:  #リードセンサーOff
+            door_status = 0  #ドアクローズとする
+            print('Door: Close.')
 
         do_post(dt, tm, door_status)
 
@@ -100,10 +99,10 @@ async def do_task():
 
 
 #メイン処理
-if __name__ == "__main__":
+if __name__ == '__main__':
     #初期化
     try:
-        lcl_led = Pin("LED", Pin.OUT)
+        lcl_led = Pin('LED', Pin.OUT)
 
         reed = Pin(14, Pin.IN)
 
@@ -117,9 +116,9 @@ if __name__ == "__main__":
                 if rtc.setrtc() != False:
                     break
 
-                print("Waiting RTC Set...")
+                print('Waiting RTC Set...')
             else:
-                print("RTC Set Error.")
+                print('RTC Set Error.')
                 machine.reset()
 
             loop = uasyncio.new_event_loop()
@@ -128,9 +127,9 @@ if __name__ == "__main__":
             try:
                 loop.run_forever()
             except Exception as ex:
-                print("Exception Error: ", ex)
+                print('Exception Error: ', ex)
             except KeyboardInterrupt:
-                print("Program Interrupted by the user.")
+                print('Program Interrupted by the user.')
                 pass
             finally:
                 loop.close()
@@ -144,7 +143,7 @@ if __name__ == "__main__":
                 utime.sleep(1)
 
     except Exception as e:
-        print("device init - Exception Error: ", e)
+        print('device init - Exception Error: ', e)
 
         while True:  #LED点滅
             lcl_led.toggle()
