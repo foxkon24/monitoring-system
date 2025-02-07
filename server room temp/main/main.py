@@ -205,7 +205,7 @@ if __name__ == "__main__":
                 print("RTC Set Error.")
                 machine.reset()
 
-            wh = webhhok.Webhook()
+            wh = webhook.Webhook()
 
             loop = uasyncio.new_event_loop()
             loop.create_task(do_task())
